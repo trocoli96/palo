@@ -155,6 +155,8 @@ export class AuthService {
         provider: authProvider,
         role,
         status,
+        tenant: null,
+        tenantName: null,
       });
 
       user = await this.usersService.findOne({
@@ -212,6 +214,8 @@ export class AuthService {
         id: StatusEnum.inactive,
       } as Status,
       hash,
+      tenant: dto.tenant,
+      tenantName: dto.tenantName,
     });
 
     await this.mailService.userSignUp({

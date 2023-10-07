@@ -4,12 +4,16 @@ import { RoleEnum } from 'src/roles/roles.enum';
 import { StatusEnum } from 'src/statuses/statuses.enum';
 import { User } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
+import { Tenant } from '../../../tenants/entities/tenant.entity';
+import { TenantService } from '../../../tenants/tenants.service';
 
 @Injectable()
 export class UserSeedService {
   constructor(
     @InjectRepository(User)
+    @InjectRepository(Tenant)
     private repository: Repository<User>,
+    private tenantService: TenantService,
   ) {}
 
   async run() {
@@ -22,6 +26,9 @@ export class UserSeedService {
     });
 
     if (!countAdmin) {
+      const rootTenant = await this.tenantService.findOne({
+        name: 'Root',
+      });
       await this.repository.save(
         this.repository.create({
           firstName: 'Super',
@@ -36,6 +43,7 @@ export class UserSeedService {
             id: StatusEnum.active,
             name: 'Active',
           },
+          tenant: rootTenant,
         }),
       );
     }
@@ -49,6 +57,9 @@ export class UserSeedService {
     });
 
     if (!countUser) {
+      const rootTenant = await this.tenantService.findOne({
+        name: 'Root',
+      });
       await this.repository.save(
         this.repository.create({
           firstName: 'John',
@@ -63,6 +74,7 @@ export class UserSeedService {
             id: StatusEnum.active,
             name: 'Active',
           },
+          tenant: rootTenant,
         }),
       );
     }

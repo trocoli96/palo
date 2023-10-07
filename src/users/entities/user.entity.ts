@@ -18,10 +18,11 @@ import bcrypt from 'bcryptjs';
 import { EntityHelper } from 'src/utils/entity-helper';
 import { AuthProvidersEnum } from 'src/auth/auth-providers.enum';
 import { Exclude, Expose } from 'class-transformer';
+import { Tenant } from '../../tenants/entities/tenant.entity';
 
 @Entity()
 export class User extends EntityHelper {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: number;
 
   // For "string | null" we need to use String type.
@@ -82,6 +83,13 @@ export class User extends EntityHelper {
     eager: true,
   })
   status?: Status;
+
+  @ManyToOne(() => Tenant, {
+    eager: true,
+    nullable: false,
+    onDelete: 'CASCADE',
+  })
+  tenant: Tenant | null;
 
   @Column({ type: String, nullable: true })
   @Index()

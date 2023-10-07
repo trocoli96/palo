@@ -29,10 +29,3 @@ services:
   #   image: redis:7-alpine
   #   ports:
   #     - 6379:6379
-
-  api:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - ${APP_PORT}:${APP_PORT}

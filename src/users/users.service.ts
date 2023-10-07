@@ -6,18 +6,32 @@ import { DeepPartial, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
 import { NullableType } from '../utils/types/nullable.type';
+import { TenantService } from '../tenants/tenants.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
+    private tenantService: TenantService,
   ) {}
 
-  create(createProfileDto: CreateUserDto): Promise<User> {
-    return this.usersRepository.save(
-      this.usersRepository.create(createProfileDto),
-    );
+  async create(createProfileDto: CreateUserDto): Promise<User> {
+    if (createProfileDto.tenant) {
+      return this.usersRepository.save(
+        this.usersRepository.create(createProfileDto),
+      );
+    } else {
+      const tenant = await this.tenantService.create({
+        name: createProfileDto.tenantName,
+      });
+      return this.usersRepository.save(
+        this.usersRepository.create({
+          ...createProfileDto,
+          tenant: tenant,
+        }),
+      );
+    }
   }
 
   findManyWithPagination(
