@@ -46,6 +46,10 @@ export class TenantService {
     });
   }
 
+  async getOne(id: number): Promise<NullableType<Tenant>> {
+    return this.findOne({ id });
+  }
+
   async update(
     id: number,
     tenantData: DeepPartial<UpdateTenantDto>,

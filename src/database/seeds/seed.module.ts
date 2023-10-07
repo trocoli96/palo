@@ -9,11 +9,13 @@ import { RoleSeedModule } from './role/role-seed.module';
 import { StatusSeedModule } from './status/status-seed.module';
 import { UserSeedModule } from './user/user-seed.module';
 import { TenantSeedModule } from './tenant/tenant-seed.module';
+import { LocalSeedModule } from './local/local-seed.module';
 
 @Module({
   imports: [
     RoleSeedModule,
     StatusSeedModule,
+    LocalSeedModule,
     UserSeedModule,
     TenantSeedModule,
     ConfigModule.forRoot({

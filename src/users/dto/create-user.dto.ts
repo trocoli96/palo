@@ -14,6 +14,7 @@ import { FileEntity } from 'src/files/entities/file.entity';
 import { IsExist } from 'src/utils/validators/is-exists.validator';
 import { lowerCaseTransformer } from 'src/utils/transformers/lower-case.transformer';
 import { Tenant } from '../../tenants/entities/tenant.entity';
+import { Local } from '../../locales/entities/locales.entity';
 
 export class CreateUserDto {
   @ApiProperty({ example: 'test1@example.com' })
@@ -70,6 +71,12 @@ export class CreateUserDto {
     message: 'statusNotExists',
   })
   status?: Status;
+
+  @ApiProperty({ type: Local })
+  @Validate(IsExist, ['Local', 'id'], {
+    message: 'localNotExists',
+  })
+  local?: Local;
 
   hash?: string | null;
 }

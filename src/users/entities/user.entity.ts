@@ -19,6 +19,7 @@ import { EntityHelper } from 'src/utils/entity-helper';
 import { AuthProvidersEnum } from 'src/auth/auth-providers.enum';
 import { Exclude, Expose } from 'class-transformer';
 import { Tenant } from '../../tenants/entities/tenant.entity';
+import { Local } from '../../locales/entities/locales.entity';
 
 @Entity()
 export class User extends EntityHelper {
@@ -83,6 +84,11 @@ export class User extends EntityHelper {
     eager: true,
   })
   status?: Status;
+
+  @ManyToOne(() => Local, {
+    eager: true,
+  })
+  local?: Local;
 
   @ManyToOne(() => Tenant, {
     eager: true,

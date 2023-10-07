@@ -31,6 +31,8 @@ import { SessionService } from 'src/session/session.service';
 import { JwtRefreshPayloadType } from './strategies/types/jwt-refresh-payload.type';
 import { Session } from 'src/session/entities/session.entity';
 import { JwtPayloadType } from './strategies/types/jwt-payload.type';
+import { Local } from '../locales/entities/locales.entity';
+import { LocalesEnum } from '../locales/locales.enum';
 
 @Injectable()
 export class AuthService {
@@ -146,6 +148,9 @@ export class AuthService {
       const status = plainToClass(Status, {
         id: StatusEnum.active,
       });
+      const local = plainToClass(Local, {
+        id: LocalesEnum['en-EN'],
+      });
 
       user = await this.usersService.create({
         email: socialEmail ?? null,
@@ -155,6 +160,7 @@ export class AuthService {
         provider: authProvider,
         role,
         status,
+        local,
         tenant: null,
         tenantName: null,
       });
@@ -213,6 +219,9 @@ export class AuthService {
       status: {
         id: StatusEnum.inactive,
       } as Status,
+      local: {
+        id: LocalesEnum['en-EN'],
+      } as Local,
       hash,
       tenant: dto.tenant,
       tenantName: dto.tenantName,

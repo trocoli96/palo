@@ -18,8 +18,14 @@ export class UsersService {
 
   async create(createProfileDto: CreateUserDto): Promise<User> {
     if (createProfileDto.tenant) {
+      const tenant = await this.tenantService.getOne(
+        createProfileDto.tenant.id,
+      );
       return this.usersRepository.save(
-        this.usersRepository.create(createProfileDto),
+        this.usersRepository.create({
+          ...createProfileDto,
+          local: createProfileDto.local || tenant?.local,
+        }),
       );
     } else {
       const tenant = await this.tenantService.create({

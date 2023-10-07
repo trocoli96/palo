@@ -8,6 +8,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Status } from '../../statuses/entities/status.entity';
+import { Local } from '../../locales/entities/locales.entity';
 
 @Entity()
 export class Tenant {
@@ -21,6 +22,11 @@ export class Tenant {
     eager: true,
   })
   status?: Status;
+
+  @ManyToOne(() => Local, {
+    eager: true,
+  })
+  local?: Local;
 
   @CreateDateColumn()
   createdAt: Date;
