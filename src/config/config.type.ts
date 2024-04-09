@@ -68,6 +68,7 @@ export type MailConfig = {
   ignoreTLS: boolean;
   secure: boolean;
   requireTLS: boolean;
+  resendKey?: string;
 };
 
 export type TwitterConfig = {

@@ -1,32 +1,25 @@
 import { Injectable } from '@nestjs/common';
 import fs from 'node:fs/promises';
 import { ConfigService } from '@nestjs/config';
-import nodemailer from 'nodemailer';
 import Handlebars from 'handlebars';
 import { AllConfigType } from 'src/config/config.type';
+import { Resend } from 'resend';
+import { ResendOptions } from './types/mail';
 
 @Injectable()
 export class MailerService {
-  private readonly transporter: nodemailer.Transporter;
+  private readonly transporter: Resend;
   constructor(private readonly configService: ConfigService<AllConfigType>) {
-    this.transporter = nodemailer.createTransport({
-      host: configService.get('mail.host', { infer: true }),
-      port: configService.get('mail.port', { infer: true }),
-      ignoreTLS: configService.get('mail.ignoreTLS', { infer: true }),
-      secure: configService.get('mail.secure', { infer: true }),
-      requireTLS: configService.get('mail.requireTLS', { infer: true }),
-      auth: {
-        user: configService.get('mail.user', { infer: true }),
-        pass: configService.get('mail.password', { infer: true }),
-      },
-    });
+    this.transporter = new Resend(
+      configService.get('mail.resendKey', { infer: true }),
+    );
   }
 
   async sendMail({
     templatePath,
     context,
     ...mailOptions
-  }: nodemailer.SendMailOptions & {
+  }: ResendOptions & {
     templatePath: string;
     context: Record<string, unknown>;
   }): Promise<void> {
@@ -38,16 +31,23 @@ export class MailerService {
       })(context);
     }
 
-    await this.transporter.sendMail({
-      ...mailOptions,
-      from: mailOptions.from
-        ? mailOptions.from
-        : `"${this.configService.get('mail.defaultName', {
-            infer: true,
-          })}" <${this.configService.get('mail.defaultEmail', {
-            infer: true,
-          })}>`,
-      html: mailOptions.html ? mailOptions.html : html,
-    });
+    try {
+      const resendOptions = {
+        to: mailOptions.to,
+        subject: mailOptions.subject || '',
+        from: mailOptions.from
+          ? mailOptions.from
+          : `"${this.configService.get('mail.defaultName', {
+              infer: true,
+            })}" <${this.configService.get('mail.defaultEmail', {
+              infer: true,
+            })}>`,
+        html: mailOptions.html ? mailOptions.html : html,
+        react: null,
+      };
+      await this.transporter.emails.send(resendOptions);
+    } catch (e) {
+      console.error(e);
+    }
   }
 }
