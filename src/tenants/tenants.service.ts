@@ -46,12 +46,12 @@ export class TenantService {
     });
   }
 
-  async getOne(id: number): Promise<NullableType<Tenant>> {
+  async getOne(id: string): Promise<NullableType<Tenant>> {
     return this.findOne({ id });
   }
 
   async update(
-    id: number,
+    id: string,
     tenantData: DeepPartial<UpdateTenantDto>,
   ): Promise<NullableType<Tenant>> {
     await this.findOne({ id }); // Check if the tenant exists
@@ -59,7 +59,7 @@ export class TenantService {
     return this.findOne({ id });
   }
 
-  async remove(id: number): Promise<void> {
+  async remove(id: string): Promise<void> {
     await this.findOne({ id }); // Check if the tenant exists
     await this.tenantRepository.delete(id);
   }

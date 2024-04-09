@@ -7,12 +7,12 @@ import {
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { Allow } from 'class-validator';
-import { EntityHelper } from 'src/utils/entity-helper';
 import appConfig from '../../config/app.config';
 import { AppConfig } from 'src/config/config.type';
+import { BaseNotNullableUserTenantEntity } from '../../utils/base-not-nullable-user-tenant-entity';
 
 @Entity({ name: 'file' })
-export class FileEntity extends EntityHelper {
+export class FileEntity extends BaseNotNullableUserTenantEntity {
   @ApiProperty({ example: 'cbcfa8b8-3a25-4adb-a9c6-e325f0d0f3ae' })
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -20,6 +20,17 @@ export class FileEntity extends EntityHelper {
   @Allow()
   @Column()
   path: string;
+
+  @Column()
+  url: string;
+
+  @Column()
+  key: string;
+
+  @Column({
+    nullable: true,
+  })
+  type: string;
 
   @AfterLoad()
   @AfterInsert()

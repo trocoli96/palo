@@ -10,6 +10,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { FileEntity } from './entities/file.entity';
 import { FilesService } from './files.service';
 import { AllConfigType } from 'src/config/config.type';
+import { UsersModule } from '../users/users.module';
+import { TenantsModule } from '../tenants/tenants.module';
 
 @Module({
   imports: [
@@ -51,12 +53,19 @@ import { AllConfigType } from 'src/config/config.type';
               bucket: configService.getOrThrow('file.awsDefaultS3Bucket', {
                 infer: true,
               }),
-              acl: 'public-read',
               contentType: multerS3.AUTO_CONTENT_TYPE,
-              key: (request, file, callback) => {
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore
+              key: (
+                request: { user: { tenantId: string } },
+                file,
+                callback,
+              ) => {
                 callback(
                   null,
-                  `${randomStringGenerator()}.${file.originalname
+                  `tenants/${
+                    request?.user?.tenantId || 'noTenant'
+                  }/${randomStringGenerator()}.${file.originalname
                     .split('.')
                     .pop()
                     ?.toLowerCase()}`,
@@ -68,7 +77,9 @@ import { AllConfigType } from 'src/config/config.type';
 
         return {
           fileFilter: (request, file, callback) => {
-            if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/i)) {
+            if (
+              !file.originalname.match(/\.(jpg|jpeg|png|gif|pdf|docx|doc)$/i)
+            ) {
               return callback(
                 new HttpException(
                   {
@@ -95,8 +106,11 @@ import { AllConfigType } from 'src/config/config.type';
         };
       },
     }),
+    UsersModule,
+    TenantsModule,
   ],
   controllers: [FilesController],
   providers: [ConfigModule, ConfigService, FilesService],
+  exports: [FilesService],
 })
 export class FilesModule {}

@@ -75,7 +75,7 @@ export class TenantsController {
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   findOne(@Param('id') id: string): Promise<NullableType<Tenant>> {
-    return this.tenantService.findOne({ id: +id });
+    return this.tenantService.findOne({ id: id });
   }
 
   @SerializeOptions({
@@ -84,7 +84,7 @@ export class TenantsController {
   @Patch(':id')
   @HttpCode(HttpStatus.OK)
   update(
-    @Param('id') id: number,
+    @Param('id') id: string,
     @Body() updateTenantDto: UpdateTenantDto,
   ): Promise<NullableType<Tenant>> {
     return this.tenantService.update(id, updateTenantDto);
@@ -92,7 +92,7 @@ export class TenantsController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id') id: number): Promise<void> {
+  remove(@Param('id') id: string): Promise<void> {
     return this.tenantService.remove(id);
   }
 }

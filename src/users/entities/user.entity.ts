@@ -24,7 +24,7 @@ import { Local } from '../../locales/entities/locales.entity';
 @Entity()
 export class User extends EntityHelper {
   @PrimaryGeneratedColumn('uuid')
-  id: number;
+  id: string;
 
   // For "string | null" we need to use String type.
   // More info: https://github.com/typeorm/typeorm/issues/2567

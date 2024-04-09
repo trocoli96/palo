@@ -13,7 +13,7 @@ import { Local } from '../../locales/entities/locales.entity';
 @Entity()
 export class Tenant {
   @PrimaryGeneratedColumn('uuid')
-  id: number;
+  id: string;
 
   @Column({ type: String, unique: true, nullable: true })
   name: string | null;

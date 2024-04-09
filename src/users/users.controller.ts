@@ -75,7 +75,7 @@ export class UsersController {
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   findOne(@Param('id') id: string): Promise<NullableType<User>> {
-    return this.usersService.findOne({ id: +id });
+    return this.usersService.findOne({ id: id });
   }
 
   @SerializeOptions({
@@ -84,7 +84,7 @@ export class UsersController {
   @Patch(':id')
   @HttpCode(HttpStatus.OK)
   update(
-    @Param('id') id: number,
+    @Param('id') id: string,
     @Body() updateProfileDto: UpdateUserDto,
   ): Promise<User> {
     return this.usersService.update(id, updateProfileDto);
@@ -92,7 +92,7 @@ export class UsersController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id') id: number): Promise<void> {
+  remove(@Param('id') id: string): Promise<void> {
     return this.usersService.softDelete(id);
   }
 }
