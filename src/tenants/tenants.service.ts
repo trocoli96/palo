@@ -10,6 +10,7 @@ import { UpdateTenantDto } from './dto/update-tenant.dto';
 import { plainToClass } from 'class-transformer';
 import { Status } from '../statuses/entities/status.entity';
 import { StatusEnum } from '../statuses/statuses.enum';
+import { addYears } from 'date-fns';
 
 @Injectable()
 export class TenantService {
@@ -62,5 +63,41 @@ export class TenantService {
   async remove(id: string): Promise<void> {
     await this.findOne({ id }); // Check if the tenant exists
     await this.tenantRepository.delete(id);
+  }
+
+  async updateTenantSubscription({
+    tenantId,
+    subscriptionId,
+    subscriptionType,
+    stripeCustomerId,
+  }: {
+    tenantId: string;
+    subscriptionId?: any;
+    subscriptionType: 'stripe' | 'shopify';
+    stripeCustomerId?: any;
+  }) {
+    const tenant = await this.findOne({
+      id: tenantId,
+    });
+
+    if (!tenant) {
+      throw new Error(`Tenant with id ${tenantId} not found`);
+    }
+
+    tenant.subscriptionActive = true;
+    tenant.subscriptionEnd = addYears(new Date(), 1);
+    tenant.subscriptionType = subscriptionType;
+    if (subscriptionId) {
+      tenant.stripeSubscriptionId =
+        typeof subscriptionId === 'string'
+          ? subscriptionId
+          : subscriptionId?.id;
+    }
+    tenant.stripeCustomerId =
+      typeof stripeCustomerId === 'string'
+        ? stripeCustomerId
+        : stripeCustomerId?.id;
+
+    await this.update(tenantId, tenant);
   }
 }

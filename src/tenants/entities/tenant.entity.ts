@@ -28,6 +28,21 @@ export class Tenant {
   })
   local?: Local;
 
+  @Column({ type: 'boolean', nullable: true })
+  subscriptionActive: boolean;
+
+  @Column({ nullable: true })
+  subscriptionEnd: Date;
+
+  @Column({ nullable: true })
+  subscriptionType: string;
+
+  @Column({ nullable: true })
+  stripeCustomerId: string;
+
+  @Column({ nullable: true })
+  stripeSubscriptionId: string;
+
   @CreateDateColumn()
   createdAt: Date;
 
