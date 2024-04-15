@@ -10,6 +10,7 @@ import { StatusSeedModule } from './status/status-seed.module';
 import { UserSeedModule } from './user/user-seed.module';
 import { TenantSeedModule } from './tenant/tenant-seed.module';
 import { LocalSeedModule } from './local/local-seed.module';
+import { DataSourceSeedModule } from './data-source/data-source-seed.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { LocalSeedModule } from './local/local-seed.module';
     LocalSeedModule,
     UserSeedModule,
     TenantSeedModule,
+    DataSourceSeedModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [databaseConfig, appConfig],

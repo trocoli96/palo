@@ -7,6 +7,8 @@ import {
   UploadedFile,
   UseGuards,
   UseInterceptors,
+  Request,
+  Body,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
@@ -39,8 +41,15 @@ export class FilesController {
   @UseInterceptors(FileInterceptor('file'))
   async uploadFile(
     @UploadedFile() file: Express.Multer.File | Express.MulterS3.File,
+    @Request() request,
+    @Body() body,
   ) {
-    return this.filesService.uploadFile(file);
+    return this.filesService.uploadFile(
+      file,
+      request.user.id,
+      request.user.tenantId,
+      body,
+    );
   }
 
   @Get(':path')
