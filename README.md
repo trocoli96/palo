@@ -5,7 +5,7 @@
 
 ## Description <!-- omit in toc -->
 
-NestJS REST API boilerplate for typical project
+Palo Project: A boilerplate for SaaS applications
 
 [Full documentation here](https://github.com/brocoders/nestjs-boilerplate/blob/main/docs/readme.md)
 
@@ -40,7 +40,6 @@ NestJS REST API boilerplate for typical project
 ## Quick run
 
 ```bash
-git clone --depth 1 https://github.com/brocoders/nestjs-boilerplate.git my-app
 cd my-app/
 cp env-example .env
 docker compose up -d
@@ -55,19 +54,16 @@ docker compose logs
 ## Comfortable development
 
 ```bash
-git clone --depth 1 https://github.com/brocoders/nestjs-boilerplate.git my-app
 cd my-app/
 cp env-example .env
 ```
 
 Change `DATABASE_HOST=postgres` to `DATABASE_HOST=localhost`
 
-Change `MAIL_HOST=maildev` to `MAIL_HOST=localhost`
-
 Run additional container:
 
 ```bash
-docker compose up -d postgres adminer maildev
+docker compose up -d postgres
 ```
 
 ```bash
@@ -83,8 +79,6 @@ npm run start:dev
 ## Links
 
 - Swagger: <http://localhost:3000/docs>
-- Adminer (client for DB): <http://localhost:8080>
-- Maildev: <http://localhost:1080>
 
 ## Automatic update of dependencies
 
@@ -136,10 +130,4 @@ npm run test:e2e
 
 ```bash
 docker compose -f docker-compose.ci.yaml --env-file env-example -p ci up --build --exit-code-from api && docker compose -p ci rm -svf
-```
-
-## Test benchmarking
-
-```bash
-docker run --rm jordi/ab -n 100 -c 100 -T application/json -H "Authorization: Bearer USER_TOKEN" -v 2 http://<server_ip>:3000/api/v1/users
 ```
