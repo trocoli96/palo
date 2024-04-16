@@ -10,6 +10,9 @@ import {
   Patch,
   Delete,
   SerializeOptions,
+  BadRequestException,
+  Param,
+  NotFoundException,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
@@ -23,6 +26,8 @@ import { AuthRegisterLoginDto } from './dto/auth-register-login.dto';
 import { LoginResponseType } from './types/login-response.type';
 import { User } from '../users/entities/user.entity';
 import { NullableType } from '../utils/types/nullable.type';
+import { Public } from './guards/public.decorator';
+import { UpdateUserDto } from '../users/dto/update-user.dto';
 
 @ApiTags('Auth')
 @Controller({
@@ -61,10 +66,10 @@ export class AuthController {
   }
 
   @Post('email/confirm')
-  @HttpCode(HttpStatus.NO_CONTENT)
+  @Public()
   async confirmEmail(
     @Body() confirmEmailDto: AuthConfirmEmailDto,
-  ): Promise<void> {
+  ): Promise<LoginResponseType> {
     return this.service.confirmEmail(confirmEmailDto.hash);
   }
 
@@ -139,5 +144,45 @@ export class AuthController {
   @HttpCode(HttpStatus.NO_CONTENT)
   public async delete(@Request() request): Promise<void> {
     return this.service.softDelete(request.user);
+  }
+
+  @ApiBearerAuth()
+  @Post('/invite')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthGuard('jwt'))
+  async inviteUser(
+    @Request() request,
+    @Body() emailDto: { email: string },
+  ): Promise<{ message: string }> {
+    const tenantId = request?.user?.tenantId;
+    await this.service.sendUserInvitation(emailDto.email, tenantId);
+    return { message: 'Invitation sent successfully.' };
+  }
+
+  @Post('/update-from-invitation/:hash')
+  @Public()
+  async updateUserFromInvitation(
+    @Body() updateUserDto: UpdateUserDto,
+    @Param('hash') hash: string,
+  ) {
+    try {
+      const updatedUser = await this.service.updateUserFromInvitation(
+        updateUserDto,
+        hash,
+      );
+      return { message: 'User updated successfully', details: updatedUser };
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
+
+  @Get('/validate-invitation/:hash')
+  @Public()
+  async validateInvitationHash(@Param('hash') hash: string) {
+    const user = await this.service.validateInvitationHash(hash);
+    if (!user) {
+      throw new NotFoundException('Invalid or expired invitation link.');
+    }
+    return { message: 'The invitation link is valid.', email: user.email };
   }
 }

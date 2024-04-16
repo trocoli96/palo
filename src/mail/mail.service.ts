@@ -108,4 +108,49 @@ export class MailService {
       },
     });
   }
+
+  async sendInvitation(mailData: MailData<{ hash: string }>): Promise<void> {
+    const i18n = I18nContext.current();
+    let invitationTitle: MaybeType<string>;
+    let invitationText1: MaybeType<string>;
+    let invitationText2: MaybeType<string>;
+    let actionTitle: MaybeType<string>;
+
+    if (i18n) {
+      [invitationTitle, invitationText1, invitationText2, actionTitle] =
+        await Promise.all([
+          i18n.t('invite-user.title'),
+          i18n.t('invite-user.text1'),
+          i18n.t('invite-user.text2'),
+          i18n.t('invite-user.actionTitle'),
+        ]);
+    }
+
+    await this.mailerService.sendMail({
+      to: mailData.to,
+      subject: invitationTitle,
+      text: `${invitationText1} ${this.configService.get('app.frontendDomain', {
+        infer: true,
+      })}/confirm-invitation/${mailData.data.hash} ${invitationText2}`,
+      templatePath: path.join(
+        this.configService.getOrThrow('app.workingDirectory', {
+          infer: true,
+        }),
+        'src',
+        'mail',
+        'mail-templates',
+        'invitation.hbs',
+      ),
+      context: {
+        title: invitationTitle,
+        url: `${this.configService.get('app.frontendDomain', {
+          infer: true,
+        })}/confirm-invitation/${mailData.data.hash}`,
+        actionTitle: actionTitle,
+        app_name: this.configService.get('app.name', { infer: true }),
+        text1: invitationText1,
+        text2: invitationText2,
+      },
+    });
+  }
 }

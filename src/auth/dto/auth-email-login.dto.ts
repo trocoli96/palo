@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, Validate } from 'class-validator';
+import { IsNotEmpty, IsOptional, Validate } from 'class-validator';
 import { IsExist } from 'src/utils/validators/is-exists.validator';
 import { Transform } from 'class-transformer';
 import { lowerCaseTransformer } from 'src/utils/transformers/lower-case.transformer';
@@ -15,4 +15,11 @@ export class AuthEmailLoginDto {
   @ApiProperty()
   @IsNotEmpty()
   password: string;
+
+  @ApiProperty({ example: 'test1@example.com' })
+  @IsOptional()
+  @Validate(IsExist, ['DataSource', 'id'], {
+    message: 'dataSourceNotExist',
+  })
+  dataSource: number;
 }

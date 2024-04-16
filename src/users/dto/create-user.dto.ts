@@ -35,12 +35,12 @@ export class CreateUserDto {
   socialId?: string | null;
 
   @ApiProperty({ example: 'John' })
-  @IsNotEmpty()
-  firstName: string | null;
+  @IsOptional()
+  firstName?: string | null;
 
   @ApiProperty({ example: 'Doe' })
-  @IsNotEmpty()
-  lastName: string | null;
+  @IsOptional()
+  lastName?: string | null;
 
   @ApiProperty({ example: 'f5821670-fe6c-4e55-982c-dfa5e16a4ba5' })
   @Validate(IsExist, ['Tenant', 'id'], {
@@ -51,7 +51,7 @@ export class CreateUserDto {
 
   @ApiProperty({ example: 'Acme' })
   @IsOptional()
-  tenantName: string | null;
+  tenantName?: string | null;
 
   @ApiProperty({ type: () => FileEntity })
   @IsOptional()
