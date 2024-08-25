@@ -23,6 +23,11 @@ export class AuthGoogleController {
   ): Promise<LoginResponseType> {
     const socialData = await this.authGoogleService.getProfileByToken(loginDto);
 
-    return this.authService.validateSocialLogin('google', socialData);
+    return this.authService.validateSocialLogin(
+      'google',
+      socialData,
+      'login',
+      '',
+    );
   }
 }

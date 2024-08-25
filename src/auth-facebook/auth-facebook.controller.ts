@@ -25,6 +25,11 @@ export class AuthFacebookController {
       loginDto,
     );
 
-    return this.authService.validateSocialLogin('facebook', socialData);
+    return this.authService.validateSocialLogin(
+      'facebook',
+      socialData,
+      'login',
+      '',
+    );
   }
 }

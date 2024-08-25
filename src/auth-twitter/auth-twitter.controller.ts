@@ -25,6 +25,11 @@ export class AuthTwitterController {
       loginDto,
     );
 
-    return this.authService.validateSocialLogin('twitter', socialData);
+    return this.authService.validateSocialLogin(
+      'twitter',
+      socialData,
+      'login',
+      '',
+    );
   }
 }

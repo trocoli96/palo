@@ -21,6 +21,11 @@ export class AuthAppleController {
   async login(@Body() loginDto: AuthAppleLoginDto): Promise<LoginResponseType> {
     const socialData = await this.authAppleService.getProfileByToken(loginDto);
 
-    return this.authService.validateSocialLogin('apple', socialData);
+    return this.authService.validateSocialLogin(
+      'apple',
+      socialData,
+      'login',
+      '',
+    );
   }
 }
